@@ -15,17 +15,21 @@ import {
   MaterialCommunityIcons,
   Entypo,
 } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { authenticate } from "../redux/authSlice";
 
 const LoginScreen = ({navigation}) => {
+
+    const dispatch = useDispatch();
     const [userDetails, setUserDetails] = useState({
         email: "",
         password: "",
       });
       const [passwordFocus, setPasswordFocus] = useState(false);
-      console.log(passwordFocus);
 
     const loginHandler = async() => {
-      Alert.alert("login in ...")
+      Alert.alert("login in successfully...");
+      dispatch(authenticate({token:"lkjdsflkj",userDetails:true}))
     };
 
   return (

@@ -25,7 +25,6 @@ const RegisterScreen = ({ navigation }) => {
     password: "",
   });
   const [passwordFocus, setPasswordFocus] = useState(false);
-  console.log(passwordFocus);
 
   const registerHandler = async () => {
     Alert.alert("registering ...");

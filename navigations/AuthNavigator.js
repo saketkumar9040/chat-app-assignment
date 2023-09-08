@@ -3,11 +3,13 @@ import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import MainNavigator from "./MainNavigator";
+import { useSelector } from "react-redux";
 
 const Stack = createStackNavigator();
 
 const AuthNavigator = () => {
   const isAuth = false;
+  console.log(useSelector((state)=>state.auth.userData !==""))
 
   return (
     <NavigationContainer>

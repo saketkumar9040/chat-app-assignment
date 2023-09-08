@@ -1,9 +1,11 @@
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert} from "react-native";
 import * as Updates from "expo-updates";
 import AuthNavigator from "./navigations/AuthNavigator";
+import { Provider } from "react-redux";
+import { store}  from "./redux/store.js"
+
 
 export default function App() {
-
   async function onFetchUpdateAsync() {
     try {
       const update = await Updates.checkForUpdateAsync();
@@ -27,7 +29,8 @@ export default function App() {
   onFetchUpdateAsync();
 
   return (
-     <AuthNavigator/>
+    <Provider store={store}>
+      <AuthNavigator />
+    </Provider>
   );
-};
-
+}
