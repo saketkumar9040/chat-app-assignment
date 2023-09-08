@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
   alreadyAccountText: {
     fontSize: 17,
     fontWeight: "600",
+    color:"#188780"
   },
   registerButton: {
     marginTop:30,
