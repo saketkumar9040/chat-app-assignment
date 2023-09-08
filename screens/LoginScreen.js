@@ -7,8 +7,9 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   FontAwesome5,
   MaterialCommunityIcons,
@@ -16,6 +17,17 @@ import {
 } from "@expo/vector-icons";
 
 const LoginScreen = ({navigation}) => {
+    const [userDetails, setUserDetails] = useState({
+        email: "",
+        password: "",
+      });
+      const [passwordFocus, setPasswordFocus] = useState(false);
+      console.log(passwordFocus);
+
+    const loginHandler = async() => {
+      Alert.alert("login in ...")
+    };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headerIconcontainer}>
@@ -30,6 +42,8 @@ const LoginScreen = ({navigation}) => {
             style={styles.textInput}
             keyboardType="email-address"
             autoCapitalize="none"
+            value={userDetails.email}
+            onChangeText={(e)=>setUserDetails({...userDetails,email:e})}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -38,16 +52,20 @@ const LoginScreen = ({navigation}) => {
             placeholder="Enter your password"
             placeholderTextColor="#188780"
             style={styles.textInput}
-            keyboardType="email-address"
             autoCapitalize="none"
+            value={userDetails.password}
+            onChangeText={(e)=>setUserDetails({...userDetails,password:e})}
           />
+          <TouchableOpacity onPress={()=>setPasswordFocus(!passwordFocus)}>
+          <Entypo name={passwordFocus?"eye":"eye-with-line"} size={24} color="#188780" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={()=>loginHandler()}>
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
         <View style={styles.registerContainer}>
           <Text style={styles.alreadyAccountText}>Don't have an account ?</Text>
-          <TouchableOpacity style={styles.registerButton}>
+          <TouchableOpacity style={styles.registerButton} onPress={()=>navigation.navigate("Register")}>
             <Text style={styles.registerText}>Register</Text>
           </TouchableOpacity>
         </View>
