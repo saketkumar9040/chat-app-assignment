@@ -47,12 +47,13 @@ const LoginScreen = ({navigation}) => {
           />
         </View>
         <View style={styles.inputContainer}>
-          <Entypo name="lock" size={30} color="#188789" />
+          <Entypo name={passwordFocus?"lock-open":"lock"} size={30} color="#188789" />
           <TextInput
             placeholder="Enter your password"
             placeholderTextColor="#188780"
             style={styles.textInput}
             autoCapitalize="none"
+            secureTextEntry={!passwordFocus}
             value={userDetails.password}
             onChangeText={(e)=>setUserDetails({...userDetails,password:e})}
           />
