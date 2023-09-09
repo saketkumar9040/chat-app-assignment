@@ -6,28 +6,32 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 import backgroundImage from "../assets/images/chat-background.jpg";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { messageData } from "../assets/messageData";
-import { sendMessage } from "../utils/chatHandler";
+import { SaveNewChat, sendMessage } from "../utils/chatHandler";
 import { useSelector } from "react-redux";
 
 const ChatScreen = ({ navigation, route }) => {
   // console.log(route.params);
+  const chatUser = route.params.chatUser;
+
   const loggedInUser = useSelector((state)=>state.auth.userData);
   
-
   const [messageText, setMessageText] = useState("");
-  const chatUser = route.params.chatUser;
-  console.log(messageText)
+//   console.log(chatUser)
+// console.log(messageText)
 
   navigation.setOptions({
     headerLeft: () => {
       return (
         <View style={styles.headerLeftContainer}>
+            <TouchableOpacity onPress={()=>navigation.goBack()}>
           <AntDesign name="arrowleft" size={24} color="#fff" />
+            </TouchableOpacity>
           <FontAwesome name="user-circle-o" size={40} color="#fff" />
           <Text style={styles.headerLeftText}>{chatUser.name}</Text>
         </View>
@@ -36,7 +40,17 @@ const ChatScreen = ({ navigation, route }) => {
   });
 
   const sendMessageHandler = async() => {
-    const message = await sendMessage()
+    try {   
+        let userIds = [loggedInUser.uid]
+        const chatUsersIds = chatUser.forEach((user)=>{userIds.push(user.uid)});
+        // console.log(userIds)
+        const newChat = await SaveNewChat(loggedInUser.uid,userIds);
+        const newMessage = await sendMessage(newChat,loggedInUser.uid,messageText);
+        setMessageText("");
+    } catch (error) {
+        console.log(error);
+        Alert.alert("OOPS😪","There was some error while sending the message")
+    }
   };
 
   return (

@@ -22,7 +22,7 @@ const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
   // console.log(loginUserData.uid)
   const [users, setUsers] = useState([]);
-  console.log(users);
+  // console.log(users);
 
   navigation.setOptions({
     headerLeft: () => {
@@ -64,7 +64,6 @@ const HomeScreen = ({ navigation, route }) => {
               allUsers.push(user)
             }
          })
-
         // console.log(allUsers);
         await setUsers(allUsers)
       });
@@ -80,13 +79,12 @@ const HomeScreen = ({ navigation, route }) => {
         <FlatList
           style={{ flex: 1 }}
           data={users}
-          renderItem={(item) => {
-            
+          renderItem={(item) => {        
             return (
               <TouchableOpacity
                 style={styles.chatUserContainer}
                 onPress={() =>
-                  navigation.navigate("Chat", { chatUser: item.item })
+                  navigation.navigate("Chat", { chatUser: [item.item] })
                 }
               >
                 <View style={styles.userImageContainer}>
