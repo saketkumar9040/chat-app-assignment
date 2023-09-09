@@ -1,22 +1,27 @@
-
-import { initializeApp } from "firebase/app";
-import {getAuth} from "firebase/auth";
-import { getStorage } from "firebase/storage";
-import { getFirestore} from "firebase/firestore";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAAg9Lg5qLkaASQIVNZ_g2pOYJEvkg4SqA",
-  authDomain: "chat-app-assignment-23ddf.firebaseapp.com",
-  projectId: "chat-app-assignment-23ddf",
-  storageBucket: "chat-app-assignment-23ddf.appspot.com",
-  messagingSenderId: "525399763515",
-  appId: "1:525399763515:web:1895454eff74a470944a1e",
-   // DATABASE-URL ADDED TO MANAGE LOCATION ERROR  ====================================>
-   databaseURL:"https://chat-app-assignment-23ddf-default-rtdb.firebaseio.com/",
+    apiKey: "AIzaSyAedkMUCb-QxcnFAnLtSTQ0CSctXrlNVMc",
+    authDomain: "chat-app-assignment-a6ef6.firebaseapp.com",
+    databaseURL: "https://chat-app-assignment-a6ef6-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "chat-app-assignment-a6ef6",
+    storageBucket: "chat-app-assignment-a6ef6.appspot.com",
+    messagingSenderId: "7127908884",
+    appId: "1:7127908884:web:2b6493acbbcabda68e5d01",
+    measurementId: "G-FSSSG7QXL6"
 };
 
+let app;
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
-export const db = getFirestore(app);
+if (firebase.apps.length === 0) {
+  app = firebase.initializeApp(firebaseConfig)
+} else {
+  app = firebase.app();
+}
+
+const db = app.firestore();
+const auth = firebase.auth();
+
+export { db, auth };

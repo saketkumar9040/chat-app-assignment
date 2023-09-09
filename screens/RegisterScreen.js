@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useDebugValue, useState } from "react";
 import {
   FontAwesome5,
   MaterialCommunityIcons,
@@ -27,6 +27,9 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordFocus, setPasswordFocus] = useState(false);
 
   const registerHandler = async () => {
+    if(userDetails.email==="" || userDetails.password === "" || userDetails.phone==="" || userDetails.name===""){
+      return Alert.alert("please enter all the details 😐")
+    }
     Alert.alert("registering ...");
   };
 
