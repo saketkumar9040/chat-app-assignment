@@ -16,9 +16,12 @@ import {
   Entypo,
   FontAwesome,
 } from "@expo/vector-icons";
-import { firebase } from "../firebase/FirebaseConfig";
+import { firebase,app } from "../firebase/FirebaseConfig";
+import { useDispatch } from "react-redux";
+import { authenticate } from "../redux/authSlice";
 
 const RegisterScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [userDetails, setUserDetails] = useState({
     name: "",
     email: "",
@@ -28,21 +31,48 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordFocus, setPasswordFocus] = useState(false);
 
   const registerHandler = async () => {
-      try {
-        if(userDetails.email==="" || userDetails.password === "" || userDetails.phone==="" || userDetails.name===""){
-          return Alert.alert("please enter all the details 😐")
-        }
-        const register = await firebase.auth().createUserWithEmailAndPassword(
+    try {
+      if (
+        userDetails.email === "" ||
+        userDetails.password === "" ||
+        userDetails.phone === "" ||
+        userDetails.name === ""
+      ) {
+        return Alert.alert("please enter all the details 😐");
+      }
+      const register = await firebase
+        .auth()
+        .createUserWithEmailAndPassword(
           userDetails.email,
           userDetails.password
         );
-        console.log(register.user.uid)
+      const { uid } = register.user;
      
-   
-      } catch (error) {
-        Alert.alert("signUp error 🥵",`${error.message}`)
-        console.log(error)
-      }
+      const userData = {
+        name: userDetails.name,
+        email: userDetails.email,
+        number: userDetails.phone,
+        password: userDetails.password,
+        uid: uid,
+        signUpDate: new Date().toISOString(),
+        searchName: userDetails.name.toLowerCase(),
+      };
+
+      //  CREATE USER IN FIRESTOR REALTIME - DATABASE =====================>
+
+      const saveData = await firebase
+        .database()
+        .ref(`UserData/${uid}`)
+        .set(userData);
+
+      //  STORING THE USER STATE AND TOKEN IN STORE ========================>
+      dispatch(authenticate({ userData }));
+
+      Alert.alert("congrats🎉🎉","sign up was successful")
+    } catch (error) {
+      Alert.alert("signUp error 🥵", "registration of user was unsuccessful");
+      console.log(error);
+    }
   };
 
   return (
@@ -87,7 +117,11 @@ const RegisterScreen = ({ navigation }) => {
           />
         </View>
         <View style={styles.inputContainer}>
-        <Entypo name={passwordFocus?"lock-open":"lock"} size={30} color="#188789" />
+          <Entypo
+            name={passwordFocus ? "lock-open" : "lock"}
+            size={30}
+            color="#188789"
+          />
           <TextInput
             placeholder="Enter your password"
             placeholderTextColor="#188780"
@@ -100,7 +134,11 @@ const RegisterScreen = ({ navigation }) => {
             }
           />
           <TouchableOpacity onPress={() => setPasswordFocus(!passwordFocus)}>
-            <Entypo name={passwordFocus?"eye":"eye-with-line"} size={24} color="#188780" />
+            <Entypo
+              name={passwordFocus ? "eye" : "eye-with-line"}
+              size={24}
+              color="#188780"
+            />
           </TouchableOpacity>
         </View>
         <TouchableOpacity
