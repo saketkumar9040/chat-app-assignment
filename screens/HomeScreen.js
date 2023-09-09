@@ -22,7 +22,9 @@ const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
   // console.log(loginUserData.uid)
   const [chatIds, setChatIds] = useState([]);
-  console.log(chatIds);
+  const [allChatsData,setAllChatsData] = useState([]);
+  const [ allChatsUsers,setAllChatsUsers]  = useState([])
+  console.log(allChatsData);
 
   navigation.setOptions({
     headerLeft: () => {
@@ -50,15 +52,28 @@ const HomeScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     // getAllUsers();
-    getAllChats()
+    getAllChatsIds();
+    getAllChatsData();
   }, []);
 
-  const getAllChats = async () => {
+  const getAllChatsIds = async () => {
    const chats = await firebase.database().ref(`UsersChats/${loginUserData.uid}`).on("value",(snapshot)=>{
      let chatIds = Object.values(snapshot.val())
      setChatIds(chatIds)
    })
-  }
+  };
+
+  const getAllChatsData = async () => {
+    let chatData= []
+    for(let i =0;i<chatIds.length;i++){
+      let chatId = chatIds[i]
+      const datas = await firebase.database().ref(`Chats/${chatId}`).on("value",(snapshot)=>{
+        // console.log(snapshot.val())
+           chatData.push(snapshot.val())
+        })
+      }
+      setAllChatsData(chatData)
+  };
 
   // const getAllUsers = async () => {
   //   await firebase
