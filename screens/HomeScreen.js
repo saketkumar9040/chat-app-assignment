@@ -65,8 +65,8 @@ const HomeScreen = ({ navigation, route }) => {
             }
          })
 
-        console.log(allUsers);
-        // await setUsers[data]
+        // console.log(allUsers);
+        await setUsers(allUsers)
       });
   };
 
@@ -81,7 +81,7 @@ const HomeScreen = ({ navigation, route }) => {
           style={{ flex: 1 }}
           data={users}
           renderItem={(item) => {
-            console.log(item.item)
+            
             return (
               <TouchableOpacity
                 style={styles.chatUserContainer}
