@@ -17,20 +17,44 @@ import {
 } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { authenticate } from "../redux/authSlice";
+import { firebase } from "../firebase/FirebaseConfig";
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [userDetails, setUserDetails] = useState({
+    email: "",
+    password: "",
+  });
+  const [passwordFocus, setPasswordFocus] = useState(false);
 
-    const dispatch = useDispatch();
-    const [userDetails, setUserDetails] = useState({
-        email: "",
-        password: "",
-      });
-      const [passwordFocus, setPasswordFocus] = useState(false);
+  const loginHandler = async () => {
+    try {
+      if (userDetails.email === "" || userDetails.password === "") {
+        Alert.alert("please enter all the details😐");
+      }
+      // CHECKING LOGIN CREDENTIALS IN FIREBASE =================================>
+      const loginUser = await firebase
+        .auth()
+        .signInWithEmailAndPassword(userDetails.email, userDetails.password);
 
-    const loginHandler = async() => {
-      Alert.alert("login in successfully...");
-      dispatch(authenticate({token:"lkjdsflkj",userDetails:true}))
-    };
+      const { uid } = loginUser.user;
+
+      // FETCHING USER DETAILS FROM REALTIME - DATABASE ===========================>
+
+      const userData = await firebase
+        .database()
+        .ref(`UserData/${uid}`)
+        .on('value',(snapshot) => {
+          console.log(snapshot);
+          dispatch(authenticate({ userData: snapshot }));
+        });
+
+      Alert.alert("Hurray!🤩🤗🤗", "login in successfully...");
+    } catch (error) {
+      Alert.alert("OOPS!😧", "login was unsuccessful");
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,11 +71,15 @@ const LoginScreen = ({navigation}) => {
             keyboardType="email-address"
             autoCapitalize="none"
             value={userDetails.email}
-            onChangeText={(e)=>setUserDetails({...userDetails,email:e})}
+            onChangeText={(e) => setUserDetails({ ...userDetails, email: e })}
           />
         </View>
         <View style={styles.inputContainer}>
-          <Entypo name={passwordFocus?"lock-open":"lock"} size={30} color="#188789" />
+          <Entypo
+            name={passwordFocus ? "lock-open" : "lock"}
+            size={30}
+            color="#188789"
+          />
           <TextInput
             placeholder="Enter your password"
             placeholderTextColor="#188780"
@@ -59,18 +87,30 @@ const LoginScreen = ({navigation}) => {
             autoCapitalize="none"
             secureTextEntry={!passwordFocus}
             value={userDetails.password}
-            onChangeText={(e)=>setUserDetails({...userDetails,password:e})}
+            onChangeText={(e) =>
+              setUserDetails({ ...userDetails, password: e })
+            }
           />
-          <TouchableOpacity onPress={()=>setPasswordFocus(!passwordFocus)}>
-          <Entypo name={passwordFocus?"eye":"eye-with-line"} size={24} color="#188780" />
+          <TouchableOpacity onPress={() => setPasswordFocus(!passwordFocus)}>
+            <Entypo
+              name={passwordFocus ? "eye" : "eye-with-line"}
+              size={24}
+              color="#188780"
+            />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.buttonContainer} onPress={()=>loginHandler()}>
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => loginHandler()}
+        >
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
         <View style={styles.registerContainer}>
           <Text style={styles.alreadyAccountText}>Don't have an account ?</Text>
-          <TouchableOpacity style={styles.registerButton} onPress={()=>navigation.navigate("Register")}>
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => navigation.navigate("Register")}
+          >
             <Text style={styles.registerText}>Register</Text>
           </TouchableOpacity>
         </View>
@@ -133,22 +173,20 @@ const styles = StyleSheet.create({
   alreadyAccountText: {
     fontSize: 17,
     fontWeight: "600",
-    color:"#188780"
+    color: "#188780",
   },
   registerButton: {
-    marginTop:30,
-    borderWidth:3,
-    paddingHorizontal:40,
-    padding:5,
-    borderColor:"#188780",
-    borderRadius:80,
-
+    marginTop: 30,
+    borderWidth: 3,
+    paddingHorizontal: 40,
+    padding: 5,
+    borderColor: "#188780",
+    borderRadius: 80,
   },
-  registerText:{
-    fontSize:20,
-    fontWeight:"700",
-    color:"#188780",
-    letterSpacing:2,
-
-  }
+  registerText: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#188780",
+    letterSpacing: 2,
+  },
 });
