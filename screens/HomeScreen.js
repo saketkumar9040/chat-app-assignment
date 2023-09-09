@@ -1,10 +1,29 @@
-import { ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View,FlatList } from "react-native";
-import React from "react";
-import { Ionicons, AntDesign, FontAwesome5, FontAwesome } from "@expo/vector-icons";
-
-import backgroundImage from "../assets/images/home-background.jpg"
+import {
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Ionicons,
+  AntDesign,
+  FontAwesome5,
+  FontAwesome,
+} from "@expo/vector-icons";
+import { firebase } from "../firebase/FirebaseConfig";
+import backgroundImage from "../assets/images/home-background.jpg";
+import { useSelector } from "react-redux";
 
 const HomeScreen = ({ navigation, route }) => {
+  const loginUserData = useSelector((state) => state.auth.userData);
+  // console.log(loginUserData.uid)
+  const [users, setUsers] = useState([]);
+  console.log(users);
+
   navigation.setOptions({
     headerLeft: () => {
       return (
@@ -22,72 +41,71 @@ const HomeScreen = ({ navigation, route }) => {
             <Ionicons name="search" size={30} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-          <FontAwesome5 name="user-circle" size={28} color="#fff" />
+            <FontAwesome5 name="user-circle" size={28} color="#fff" />
           </TouchableOpacity>
         </View>
       );
     },
   });
 
-  data = [
-   {
-    name:"raj",
-    email:"raj@gmail.com",
-    profilePic:"",
-    phone:"7896837838"
-   },
-   {
-    name:"sham",
-    email:"sham@gmail.com",
-    profilePic:"",
-    phone:"7896837838"
-   },
-   {
-    name:"shankar",
-    email:"shankar@gmail.com",
-    profilePic:"",
-    phone:"7896837838"
-   },
-   {
-    name:"sahid",
-    email:"sahid@gmail.com",
-    profilePic:"",
-    phone:"7896837838"
-   },
-   {
-    name:"sonu",
-    email:"sonu@gmail.com",
-    profilePic:"",
-    phone:"7896837838"
-   },
-  ]
+  useEffect(() => {
+    getAllUsers();
+  }, []);
+
+  const getAllUsers = async () => {
+    await firebase
+      .database()
+      .ref("UserData")
+      .on("value",async (snapshot) => {
+        allUsers=[]
+        let data = Object.values(snapshot.val());
+         data.forEach((user)=>{
+            if(user.uid !== loginUserData.uid){
+              allUsers.push(user)
+            }
+         })
+
+        console.log(allUsers);
+        // await setUsers[data]
+      });
+  };
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={backgroundImage} resizeMode="cover" style={{flex:1,}}>
-       <FlatList
-         style={{flex:1}}
-         data={data}
-         renderItem={(item)=>{
-          return(
-            <TouchableOpacity style={styles.chatUserContainer} onPress={()=>navigation.navigate("Chat",{chatUser:item.item})}>
-              <View style={styles.userImageContainer}>
-              <FontAwesome name="user-circle-o" size={50} color="#fff" />
-              </View>
-              <View style={styles.userDetailsContainer}>
-              <Text style={styles.userName}>{item.item.name.toUpperCase()}</Text>
-               <Text style={styles.latestMessage}>No messages yet</Text>
-              </View>
-              <View style={styles.timeContainer}>
-                <Text style={styles.dateText}>12/4/4536</Text>
-              </View>
-            </TouchableOpacity>
-          )
-         }
-        }
-
-       />
-       </ImageBackground>
+      <ImageBackground
+        source={backgroundImage}
+        resizeMode="cover"
+        style={{ flex: 1 }}
+      >
+        <FlatList
+          style={{ flex: 1 }}
+          data={users}
+          renderItem={(item) => {
+            console.log(item.item)
+            return (
+              <TouchableOpacity
+                style={styles.chatUserContainer}
+                onPress={() =>
+                  navigation.navigate("Chat", { chatUser: item.item })
+                }
+              >
+                <View style={styles.userImageContainer}>
+                  <FontAwesome name="user-circle-o" size={50} color="#fff" />
+                </View>
+                <View style={styles.userDetailsContainer}>
+                  <Text style={styles.userName}>
+                    {item.item.name.toUpperCase()}
+                  </Text>
+                  <Text style={styles.latestMessage}>No messages yet</Text>
+                </View>
+                <View style={styles.timeContainer}>
+                  <Text style={styles.dateText}>12/4/4536</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </ImageBackground>
     </View>
   );
 };
@@ -110,44 +128,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingRight: 15,
-    gap:13,
+    gap: 13,
   },
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
     // padding:10,
   },
-  chatUserContainer:{
-    flexDirection:'row',
-    marginVertical:13,
-    marginHorizontal:10,
+  chatUserContainer: {
+    flexDirection: "row",
+    marginVertical: 13,
+    marginHorizontal: 10,
   },
-  userImageContainer:{
-      
+  userImageContainer: {},
+  userDetailsContainer: {
+    flex: 1,
+    marginLeft: 15,
+    gap: 4,
   },
-  userDetailsContainer:{
-    flex:1,
-    marginLeft:15,
-    gap:4
+  userName: {
+    fontSize: 20,
+    fontWeight: "900",
+    color: "#fff",
+    letterSpacing: 1,
   },
-  userName:{
-    fontSize:20,
-    fontWeight:'900',
-    color:"#fff",
-    letterSpacing:1,
+  latestMessage: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#fff",
+    fontStyle: "italic",
   },
-  latestMessage:{
-    fontSize:14,
-    fontWeight:"500",
-    color:"#fff",
-    fontStyle:'italic'
+  timeContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
   },
-  timeContainer:{
-    flexDirection:'row',
-    alignItems:'flex-end',
+  dateText: {
+    fontSize: 15,
+    fontWeight: "900",
+    color: "#fff",
   },
-  dateText:{
-    fontSize:15,
-    fontWeight:"900",
-    color:'#fff'
-  }
 });

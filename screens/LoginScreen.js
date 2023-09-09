@@ -46,9 +46,8 @@ const LoginScreen = ({ navigation }) => {
         .ref(`UserData/${uid}`)
         .on('value',(snapshot) => {
           // console.log(snapshot);
-          dispatch(authenticate({ userData: snapshot }));
+          dispatch(authenticate({ userData: snapshot.val() }));
         });
-
       Alert.alert("Hurray!🤩🤗🤗", "login in successfully...");
     } catch (error) {
       Alert.alert("OOPS!😧", "login was unsuccessful");

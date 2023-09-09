@@ -12,9 +12,9 @@
       "backgroundColor": "#ffffff"
     },
     "androidStatusBar": {
-			"barStyle": "light-content",
+      "barStyle": "light-content",
       "backgroundColor": "#188780"
-		},
+    },
     "androidNavigationBar": {
       "barStyle": "light-content",
       "backgroundColor": "#188780"
@@ -33,6 +33,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b22cb5fb-3e48-4fdd-b120-b8a12911d295"
+      }
     }
   }
 }

@@ -7,14 +7,21 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import backgroundImage from "../assets/images/chat-background.jpg";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { messageData } from "../assets/messageData";
+import { sendMessage } from "../utils/chatHandler";
+import { useSelector } from "react-redux";
 
 const ChatScreen = ({ navigation, route }) => {
   // console.log(route.params);
+  const loggedInUser = useSelector((state)=>state.auth.userData);
+  
+
+  const [messageText, setMessageText] = useState("");
   const chatUser = route.params.chatUser;
+  console.log(messageText)
 
   navigation.setOptions({
     headerLeft: () => {
@@ -27,6 +34,11 @@ const ChatScreen = ({ navigation, route }) => {
       );
     },
   });
+
+  const sendMessageHandler = async() => {
+    const message = await sendMessage()
+  };
+
   return (
     <ImageBackground
       source={backgroundImage}
@@ -36,7 +48,7 @@ const ChatScreen = ({ navigation, route }) => {
       <FlatList
         data={messageData}
         renderItem={(item) => {
-          console.log(item.item.body);
+        //   console.log(item.item.body);
           return (
             // <View style={styles.receivedMessageContainer}>
             //   <Text style={styles.receivedMessageText}>{item.item.body}</Text>
@@ -49,8 +61,14 @@ const ChatScreen = ({ navigation, route }) => {
       />
       <View style={styles.bottomContainer}>
         <Ionicons name="camera-sharp" size={30} color="#fff" />
-        <TextInput style={styles.textInput} placeholder="type your message" />
-        <TouchableOpacity>
+        <TextInput
+          style={styles.textInput}
+          placeholder="type your message"
+          value={messageText}
+          autoCapitalize="none"
+          onChangeText={(e)=>setMessageText(e)}
+        />
+        <TouchableOpacity onPress={()=>sendMessageHandler()}>
           <FontAwesome name="send" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
