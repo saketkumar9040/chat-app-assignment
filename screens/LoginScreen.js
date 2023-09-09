@@ -45,7 +45,7 @@ const LoginScreen = ({ navigation }) => {
         .database()
         .ref(`UserData/${uid}`)
         .on('value',(snapshot) => {
-          console.log(snapshot);
+          // console.log(snapshot);
           dispatch(authenticate({ userData: snapshot }));
         });
 
