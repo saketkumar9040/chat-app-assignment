@@ -16,6 +16,7 @@ import {
   Entypo,
   FontAwesome,
 } from "@expo/vector-icons";
+import { firebase } from "../firebase/FirebaseConfig";
 
 const RegisterScreen = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState({
@@ -27,10 +28,21 @@ const RegisterScreen = ({ navigation }) => {
   const [passwordFocus, setPasswordFocus] = useState(false);
 
   const registerHandler = async () => {
-    if(userDetails.email==="" || userDetails.password === "" || userDetails.phone==="" || userDetails.name===""){
-      return Alert.alert("please enter all the details 😐")
-    }
-    Alert.alert("registering ...");
+      try {
+        if(userDetails.email==="" || userDetails.password === "" || userDetails.phone==="" || userDetails.name===""){
+          return Alert.alert("please enter all the details 😐")
+        }
+        const register = await firebase.auth().createUserWithEmailAndPassword(
+          userDetails.email,
+          userDetails.password
+        );
+        console.log(register.user.uid)
+     
+   
+      } catch (error) {
+        Alert.alert("signUp error 🥵",`${error.message}`)
+        console.log(error)
+      }
   };
 
   return (
