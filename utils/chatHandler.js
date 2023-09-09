@@ -13,14 +13,11 @@
       newChatData.groupName=groupName;
     }
   
-    // const newChat = await push(child(dbRef, "Chats"), newChatData);
     const newChat = await firebase.database().ref("Chats").push(newChatData);
-    // console.log(newChat.key)
   
     let chatUsers = newChatData.users;
     for (let i = 0; i < chatUsers.length; i++) {
       const userId = chatUsers[i];
-    //   await push(child(dbRef, `UsersChats/${userId}`), newChat.key);
     await firebase.database().ref(`UsersChats/${userId}`).push(newChat.key)
     }
     return newChat.key;

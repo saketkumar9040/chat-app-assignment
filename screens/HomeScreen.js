@@ -21,8 +21,8 @@ import { useSelector } from "react-redux";
 const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
   // console.log(loginUserData.uid)
-  const [users, setUsers] = useState([]);
-  // console.log(users);
+  const [chatIds, setChatIds] = useState([]);
+  console.log(chatIds);
 
   navigation.setOptions({
     headerLeft: () => {
@@ -49,25 +49,33 @@ const HomeScreen = ({ navigation, route }) => {
   });
 
   useEffect(() => {
-    getAllUsers();
+    // getAllUsers();
+    getAllChats()
   }, []);
 
-  const getAllUsers = async () => {
-    await firebase
-      .database()
-      .ref("UserData")
-      .on("value",async (snapshot) => {
-        allUsers=[]
-        let data = Object.values(snapshot.val());
-         data.forEach((user)=>{
-            if(user.uid !== loginUserData.uid){
-              allUsers.push(user)
-            }
-         })
-        // console.log(allUsers);
-        await setUsers(allUsers)
-      });
-  };
+  const getAllChats = async () => {
+   const chats = await firebase.database().ref(`UsersChats/${loginUserData.uid}`).on("value",(snapshot)=>{
+     let chatIds = Object.values(snapshot.val())
+     setChatIds(chatIds)
+   })
+  }
+
+  // const getAllUsers = async () => {
+  //   await firebase
+  //     .database()
+  //     .ref("UserData")
+  //     .on("value",async (snapshot) => {
+  //       allUsers=[]
+  //       let data = Object.values(snapshot.val());
+  //        data.forEach((user)=>{
+  //           if(user.uid !== loginUserData.uid){
+  //             allUsers.push(user)
+  //           }
+  //        })
+  //       // console.log(allUsers);
+  //       await setUsers(allUsers)
+  //     });
+  // };
 
   return (
     <View style={styles.container}>
@@ -76,7 +84,7 @@ const HomeScreen = ({ navigation, route }) => {
         resizeMode="cover"
         style={{ flex: 1 }}
       >
-        <FlatList
+        {/* <FlatList
           style={{ flex: 1 }}
           data={users}
           renderItem={(item) => {        
@@ -102,7 +110,7 @@ const HomeScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             );
           }}
-        />
+        /> */}
       </ImageBackground>
     </View>
   );
