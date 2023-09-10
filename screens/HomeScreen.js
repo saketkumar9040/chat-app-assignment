@@ -21,10 +21,15 @@ import { useSelector } from "react-redux";
 const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
   const chatData = useSelector(state=>state.chat.chatList)
+  console.log(chatData)
+  const chatUserData = useSelector(state =>state.user.chatUsersList)
+  // console.log(chatUserData)
+  const messageData = useSelector(state=>state.message.messageData);
+  // console.log(messageData)
   const [chatIds, setChatIds] = useState([]);
   const [allChatsData, setAllChatsData] = useState([]);
   const [allChatsUsers, setAllChatsUsers] = useState([]);
-  console.log(allChatsData);
+  // console.log(allChatsData);
   // console.log(chatIds)
 
   if (allChatsData.length) {

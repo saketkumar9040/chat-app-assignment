@@ -24,6 +24,7 @@ const MainNavigator = () => {
     const chatData = {};
     const chatUserData = {};
     const messageData = {};
+
     const fetchingData = firebase
       .database()
       .ref(`UsersChats/${loggedInUser.uid}`)
@@ -61,7 +62,7 @@ const MainNavigator = () => {
       });
     dispatch(setChatList({ chatList: chatData }));
     dispatch(setChatUsersList({ chatUsersList: chatUserData }));
-    dispatch(setMessageList({ messageList: messageData }));
+    dispatch(setMessageList({ messageData: messageData }));
   }, []);
 
   return (
