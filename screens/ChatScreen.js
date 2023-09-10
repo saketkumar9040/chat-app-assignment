@@ -11,19 +11,15 @@ import {
 import React, { useState } from "react";
 import backgroundImage from "../assets/images/chat-background.jpg";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
-import { messageData } from "../assets/messageData";
 import { SaveNewChat, sendMessage } from "../utils/chatHandler";
 import { useSelector } from "react-redux";
 
 const ChatScreen = ({ navigation, route }) => {
-  // console.log(route.params);
   const chatUser = route.params.chatUser;
 
   const loggedInUser = useSelector((state)=>state.auth.userData);
-  
+  const [messageData,setMessageData] = useState([]);
   const [messageText, setMessageText] = useState("");
-//   console.log(chatUser)
-// console.log(messageText)
 
   navigation.setOptions({
     headerLeft: () => {
@@ -59,7 +55,7 @@ const ChatScreen = ({ navigation, route }) => {
       resizeMode="cover"
       style={{ flex: 1 }}
     >
-      <FlatList
+    { messageData.length > 0 ? (<FlatList
         data={messageData}
         renderItem={(item) => {
         //   console.log(item.item.body);
@@ -72,7 +68,11 @@ const ChatScreen = ({ navigation, route }) => {
             </View>
           );
         }}
-      />
+      />):(
+        <View style={styles.noMessageContainer}>
+          <Text style={styles.noMessageText}>No Messages 😥</Text>
+        </View>
+      )}
       <View style={styles.bottomContainer}>
         <Ionicons name="camera-sharp" size={30} color="#fff" />
         <TextInput
@@ -110,6 +110,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#188780",
     padding: 10,
     paddingHorizontal: 15,
+  },
+  noMessageContainer:{
+      flex:1,
+      alignItems:"center",
+      marginTop:50,
+      // justifyContent:"center"
+  },
+  noMessageText:{
+     fontSize:25,
+     fontWeight:'900',
+     backgroundColor:'#188780',
+     paddingHorizontal:50,
+     paddingVertical:5,
+     borderRadius:10,
+     color:"#fff",
   },
   textInput: {
     flex: 1,
