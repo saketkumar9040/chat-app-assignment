@@ -23,15 +23,15 @@ const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
   // console.log(loginUserData.uid)
   const [chatIds, setChatIds] = useState([]);
-  const [allChatsData,setAllChatsData] = useState([]);
-  const [ allChatsUsers,setAllChatsUsers]  = useState([])
+  const [allChatsData, setAllChatsData] = useState([]);
+  const [allChatsUsers, setAllChatsUsers] = useState([]);
   // console.log(allChatsData);
 
-  if(allChatsData.length){
-    let chatData = allChatsData.sort((a,b)=>{
+  if (allChatsData.length) {
+    let chatData = allChatsData.sort((a, b) => {
       return new Date(b.updatedAt) - new Date(a.updatedAt);
     });
-    setAllChatsData(chatData)
+    setAllChatsData(chatData);
   }
   // console.log(chatData)
 
@@ -107,58 +107,63 @@ const HomeScreen = ({ navigation, route }) => {
         source={backgroundImage}
         resizeMode="cover"
         style={{ flex: 1 }}
-      >{
-        allChatsData.length > 0 ? (
+      >
+        {allChatsData.length > 0 ? (
           <FlatList
-          style={{ flex: 1 }}
-          data={allChatsData}
-          renderItem={(item) => {   
-            console.log(item.item) 
-            // const userIds = item.item.users.filter((uid)=>uid !== loginUserData.uid);
-            // console.log(userIds)
-            // let userData = ""
-            // if(userIds.length<2){
-            //    firebase.database().ref(`UserData/${userIds[0]}`).on("value",(snapshot)=>{
-            //       console.log(snapshot.val());
-            //       userData = snapshot.val()
-            //    })
-            // }
-             
-            return (
-              <TouchableOpacity
-                style={styles.chatUserContainer}
-                onPress={() =>
-                  navigation.navigate("Chat", { chatUser: item.item?.users})
-                }
-              >
-                <View style={styles.userImageContainer}>
-                  <FontAwesome name="user-circle-o" size={50} color="#fff" />
-                </View>
-                <View style={styles.userDetailsContainer}>
-                  <Text style={styles.userName}> 
-                    {/* {userData.name.toUpperCase()} */}
-                  </Text>
-                  <Text style={styles.latestMessage}>No messages yet</Text>
-                </View>
-                <View style={styles.timeContainer}>
-                  <Text style={styles.dateText}>12/4/4536</Text>
-                </View>
-              </TouchableOpacity>
-            );
-          }}
-        />
-        ): (
+            style={{ flex: 1 }}
+            data={allChatsData}
+            renderItem={(item) => {
+              console.log(item.item);
+              // const userIds = item.item.users.filter((uid)=>uid !== loginUserData.uid);
+              // console.log(userIds)
+              // let userData = ""
+              // if(userIds.length<2){
+              //    firebase.database().ref(`UserData/${userIds[0]}`).on("value",(snapshot)=>{
+              //       console.log(snapshot.val());
+              //       userData = snapshot.val()
+              //    })
+              // }
+
+              return (
+                <TouchableOpacity
+                  style={styles.chatUserContainer}
+                  onPress={() =>
+                    navigation.navigate("Chat", { chatUser: item.item?.users })
+                  }
+                >
+                  <View style={styles.userImageContainer}>
+                    <FontAwesome name="user-circle-o" size={50} color="#fff" />
+                  </View>
+                  <View style={styles.userDetailsContainer}>
+                    <Text style={styles.userName}>
+                      {/* {userData.name.toUpperCase()} */}
+                    </Text>
+                    <Text style={styles.latestMessage}>No messages yet</Text>
+                  </View>
+                  <View style={styles.timeContainer}>
+                    <Text style={styles.dateText}>12/4/4536</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        ) : (
           <View style={styles.userContainer}>
-          <Text style={{...styles.noUserText,fontSize:40}}>No user yet !</Text>
-          <Entypo name="emoji-sad" size={180} color="#fff" style={{marginVertical:30,}}/>
-          <Text style={styles.noUserText}>Search for </Text>
-          <Text style={styles.noUserText}>{`>>>      Family👪` }</Text>
-          <Text style={styles.noUserText}>{`>>>      Friends😎`}</Text>
-          <Text style={styles.noUserText}>{`>>>      Groups👩‍👩‍👧‍👦`}</Text>
-        </View>
-        )
-      }
-     
+            <Text style={{ ...styles.noUserText, fontSize: 40 }}>
+              No user yet !
+            </Text>
+            <Entypo
+              name="emoji-sad"
+              size={180}
+              color="#fff"
+              style={{ marginVertical: 30 }}
+            />
+            <Text style={styles.noUserText}>Search for </Text>
+            <Text style={styles.noUserText}>{`>>>      Family👪`}</Text>
+            <Text style={styles.noUserText}>{`>>>      Friends😎`}</Text>
+            <Text style={styles.noUserText}>{`>>>      Groups👩‍👩‍👧‍👦`}</Text>
+          </View>
+        )}
       </ImageBackground>
     </View>
   );
@@ -220,16 +225,16 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     color: "#fff",
   },
-   userContainer: {
+  userContainer: {
     flex: 1,
     alignItems: "center",
-    paddingTop:100,
+    paddingTop: 100,
     // justifyContent: "center",
   },
   noUserText: {
     fontSize: 22,
     paddingTop: 10,
     color: "#fff",
-    fontWeight:"800"
+    fontWeight: "800",
   },
 });
