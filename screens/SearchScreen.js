@@ -47,22 +47,20 @@ const SearchScreen = () => {
               }
             }
             setUserList(allUsersList);
-            setSearchText("")
-          }else{
-            setSearchText("")
-            return Alert.alert("No user Found😶");
+            // setSearchText("")
           }
         });
+        // setSearchText("");
     } catch (error) {
+      setSearchText("")
       console.log(error);
     }
   };
 
   useEffect(()=>{
-    const delaySearch = setTimeout(async()=>{
-     await searchUser();
-    },500)
-    return clearTimeout(delaySearch)
+    if(searchText!==""){
+      searchUser();
+    }
   },[searchText])
   
   return (
@@ -93,7 +91,7 @@ const SearchScreen = () => {
             <Text style={styles.searchUserText}>Search users</Text>
           </View>
         )} */}
-        {searchText && userList.length > 0 ? (
+        { userList.length > 0 ? (
           <FlatList
             style={{ flex: 1 }}
             data={userList}
@@ -120,7 +118,7 @@ const SearchScreen = () => {
         ):(
           <View style={styles.noUserFound}>
           <Entypo name="emoji-sad" size={200} color="#fff" />
-          <Text style={styles.noUserFoundText}>Search users</Text>
+          <Text style={styles.noUserFoundText}>{searchText===""?"Search users":"No user found"}</Text>
         </View>
         )}
        
