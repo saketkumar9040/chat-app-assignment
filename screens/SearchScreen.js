@@ -6,14 +6,51 @@ import {
   FlatList,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import backgroundImage from "../assets/images/home-background.jpg";
 import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { firebase } from "../firebase/FirebaseConfig";
+import { useSelector } from "react-redux";
 
 const SearchScreen = () => {
+
+  const loggedInUser = useSelector((state)=>state.auth.userData);
   const [searchText, setSearchText] = useState("");
   const [userList, setUserList] = useState([]);
+  console.log(userList);
+
+  const searchUser = async () => {
+    try {
+      if (searchText === "") {
+        return Alert.alert(
+          "OOPS🙄",
+          "Please type some keywords for Searching users"
+        );
+      }
+      const searchQuery = searchText.toLowerCase().trim();
+      const searchResult = firebase
+        .database()
+        .ref("UserData")
+        .orderByChild("searchName")
+        .startAt(searchQuery)
+        .endAt(searchQuery + "\uf8ff").once("value",(snapshot)=>{
+          // console.log(snapshot.val());
+          let allUsersList = []
+          let users = Object.values(snapshot.val());
+          for(let i = 0;i<users.length;i++){
+            if(users[i].uid !== loggedInUser.uid){
+              allUsersList.push(users[i])
+            }
+          }
+          setUserList(allUsersList)
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -22,18 +59,22 @@ const SearchScreen = () => {
         style={{ flex: 1 }}
       >
         <View style={styles.searchContainer}>
-          <TextInput style={styles.textInput} placeholder="search user" />
-          <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-            <Ionicons name="search" size={30} color="#fff" />
+          <TextInput
+            style={styles.textInput}
+            placeholder="search user"
+            onChangeText={(e) => setSearchText(e)}
+          />
+          <TouchableOpacity onPress={() => searchUser()}>
+            <Ionicons name="search" size={40} color="#fff" />
           </TouchableOpacity>
         </View>
-        {searchText === "" && (
+        {/* {searchText === "" && (
           <View style={styles.searchUserContainer}>
             <Entypo name="emoji-happy" size={200} color="#fff" />
             <Text style={styles.searchUserText}>Search users</Text>
           </View>
-        )}
-        {searchText && userList.length > 0 && (
+        )} */}
+        {searchText && userList.length > 0 ? (
           <FlatList
             style={{ flex: 1 }}
             data={userList}
@@ -57,13 +98,13 @@ const SearchScreen = () => {
               );
             }}
           />
-        )}
-        {searchText && userList.length === 0 && (
+        ):(
           <View style={styles.noUserFound}>
-            <Entypo name="emoji-sad" size={200} color="#fff" />
-            <Text style={styles.noUserFoundText}>No User Found !</Text>
-          </View>
+          <Entypo name="emoji-sad" size={200} color="#fff" />
+          <Text style={styles.noUserFoundText}>No User !</Text>
+        </View>
         )}
+       
       </ImageBackground>
     </View>
   );
@@ -86,7 +127,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     backgroundColor: "#fff",
     paddingHorizontal: 15,
-    paddingVertical: 5,
+    paddingVertical: 10,
     borderRadius: 10,
     fontSize: 17,
     fontWeight: "500",
@@ -120,16 +161,16 @@ const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
-  searchUserContainer:{
-    flex:1,
-    alignItems:"center",
-    justifyContent:'center',
-    gap:20,
+  searchUserContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 20,
   },
-  searchUserText:{
-    fontSize:40,
-    fontWeight:"600",
-    color:"#fff",
-    textAlign:"center"
-  }
+  searchUserText: {
+    fontSize: 40,
+    fontWeight: "600",
+    color: "#fff",
+    textAlign: "center",
+  },
 });
