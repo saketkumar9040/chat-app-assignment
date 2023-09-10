@@ -13,6 +13,7 @@ import {
   AntDesign,
   FontAwesome5,
   FontAwesome,
+  Entypo,
 } from "@expo/vector-icons";
 import { firebase } from "../firebase/FirebaseConfig";
 import backgroundImage from "../assets/images/home-background.jpg";
@@ -24,7 +25,15 @@ const HomeScreen = ({ navigation, route }) => {
   const [chatIds, setChatIds] = useState([]);
   const [allChatsData,setAllChatsData] = useState([]);
   const [ allChatsUsers,setAllChatsUsers]  = useState([])
-  console.log(allChatsData);
+  // console.log(allChatsData);
+
+  if(allChatsData.length){
+    let chatData = allChatsData.sort((a,b)=>{
+      return new Date(b.updatedAt) - new Date(a.updatedAt);
+    });
+    setAllChatsData(chatData)
+  }
+  // console.log(chatData)
 
   navigation.setOptions({
     headerLeft: () => {
@@ -50,37 +59,37 @@ const HomeScreen = ({ navigation, route }) => {
     },
   });
 
-  useEffect(() => {
-    // getAllUsers();
-    getAllChatsIds();
-    getAllChatsData();
-  }, []);
+  // useEffect(() => {
+  //   // getAllUsers();
+  //   getAllChatsIds();
+  //   getAllChatsData();
+  // }, []);
 
-  const getAllChatsIds = async () => {
-   const chats = await firebase.database().ref(`UsersChats/${loginUserData.uid}`).on("value",(snapshot)=>{
-     let chatIds = Object.values(snapshot.val())
-     setChatIds(chatIds)
-   })
-  };
+  // const getAllChatsIds = async () => {
+  //  const chats = await firebase.database().ref(`UsersChats/${loginUserData.uid}`).on("value",(snapshot)=>{
+  //    let chatIds = Object.values(snapshot.val())
+  //    setChatIds(chatIds)
+  //  })
+  // };
 
-  const getAllChatsData = async () => {
-    let chatData= []
-    for(let i =0;i<chatIds.length;i++){
-      let chatId = chatIds[i]
-      const datas = await firebase.database().ref(`Chats/${chatId}`).on("value",(snapshot)=>{
-        // console.log(snapshot.val())
-           chatData.push(snapshot.val())
-        })
-      }
-      setAllChatsData(chatData)
-  };
+  // const getAllChatsData = async () => {
+  //   let chatData= []
+  //   for(let i =0;i<chatIds.length;i++){
+  //     let chatId = chatIds[i]
+  //     const datas = await firebase.database().ref(`Chats/${chatId}`).on("value",(snapshot)=>{
+  //       // console.log(snapshot.val())
+  //          chatData.push(snapshot.val())
+  //       })
+  //     }
+  //     setAllChatsData(chatData);
+  // };
 
   // const getAllUsers = async () => {
+  //  let  allUsers=[]
   //   await firebase
   //     .database()
   //     .ref("UserData")
   //     .on("value",async (snapshot) => {
-  //       allUsers=[]
   //       let data = Object.values(snapshot.val());
   //        data.forEach((user)=>{
   //           if(user.uid !== loginUserData.uid){
@@ -88,8 +97,8 @@ const HomeScreen = ({ navigation, route }) => {
   //           }
   //        })
   //       // console.log(allUsers);
-  //       await setUsers(allUsers)
   //     });
+  //     return allUsers
   // };
 
   return (
@@ -98,24 +107,36 @@ const HomeScreen = ({ navigation, route }) => {
         source={backgroundImage}
         resizeMode="cover"
         style={{ flex: 1 }}
-      >
-        {/* <FlatList
+      >{
+        allChatsData.length > 0 ? (
+          <FlatList
           style={{ flex: 1 }}
-          data={users}
-          renderItem={(item) => {        
+          data={allChatsData}
+          renderItem={(item) => {   
+            console.log(item.item) 
+            // const userIds = item.item.users.filter((uid)=>uid !== loginUserData.uid);
+            // console.log(userIds)
+            // let userData = ""
+            // if(userIds.length<2){
+            //    firebase.database().ref(`UserData/${userIds[0]}`).on("value",(snapshot)=>{
+            //       console.log(snapshot.val());
+            //       userData = snapshot.val()
+            //    })
+            // }
+             
             return (
               <TouchableOpacity
                 style={styles.chatUserContainer}
                 onPress={() =>
-                  navigation.navigate("Chat", { chatUser: [item.item] })
+                  navigation.navigate("Chat", { chatUser: item.item?.users})
                 }
               >
                 <View style={styles.userImageContainer}>
                   <FontAwesome name="user-circle-o" size={50} color="#fff" />
                 </View>
                 <View style={styles.userDetailsContainer}>
-                  <Text style={styles.userName}>
-                    {item.item.name.toUpperCase()}
+                  <Text style={styles.userName}> 
+                    {/* {userData.name.toUpperCase()} */}
                   </Text>
                   <Text style={styles.latestMessage}>No messages yet</Text>
                 </View>
@@ -125,7 +146,19 @@ const HomeScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             );
           }}
-        /> */}
+        />
+        ): (
+          <View style={styles.userContainer}>
+          <Text style={{...styles.noUserText,fontSize:40}}>No user yet !</Text>
+          <Entypo name="emoji-sad" size={180} color="#fff" style={{marginVertical:30,}}/>
+          <Text style={styles.noUserText}>Search for </Text>
+          <Text style={styles.noUserText}>{`>>>      Family👪` }</Text>
+          <Text style={styles.noUserText}>{`>>>      Friends😎`}</Text>
+          <Text style={styles.noUserText}>{`>>>      Groups👩‍👩‍👧‍👦`}</Text>
+        </View>
+        )
+      }
+     
       </ImageBackground>
     </View>
   );
@@ -186,5 +219,17 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "900",
     color: "#fff",
+  },
+   userContainer: {
+    flex: 1,
+    alignItems: "center",
+    paddingTop:100,
+    // justifyContent: "center",
+  },
+  noUserText: {
+    fontSize: 22,
+    paddingTop: 10,
+    color: "#fff",
+    fontWeight:"800"
   },
 });
