@@ -31,7 +31,8 @@
     text: messageText,
   };
 
-  await firebase.database().ref(`Messages/${chatId}`).push(messageData)
+  const send = await firebase.database().ref(`Messages/${chatId}`).push(messageData);
+  console.log(send)
 
   const updatedChatData = {
     updatedBy: senderUid,

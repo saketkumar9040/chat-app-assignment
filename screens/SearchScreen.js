@@ -19,7 +19,7 @@ const SearchScreen = ({navigation,route}) => {
   const loggedInUser = useSelector((state)=>state.auth.userData);
   const [searchText, setSearchText] = useState("");
   const [userList, setUserList] = useState([]);
-  console.log(userList);
+  // console.log(userList);
   
   const searchUser = async () => {
     try {
@@ -82,7 +82,7 @@ const SearchScreen = ({navigation,route}) => {
             style={{ flex: 1 }}
             data={userList}
             renderItem={(item) => {
-              console.log(item.item)
+              // console.log(item.item)
               return (
                 <TouchableOpacity
                   style={styles.chatUserContainer}
@@ -97,6 +97,7 @@ const SearchScreen = ({navigation,route}) => {
                     <Text style={styles.userName}>
                       {item.item.name.toUpperCase()}
                     </Text>
+                    <Text style={{color:'#fff'}}>Tap to Chat</Text>
                   </View>
                 </TouchableOpacity>
               );
