@@ -7,7 +7,7 @@ import {
   View,
   FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Ionicons,
   AntDesign,
@@ -15,23 +15,24 @@ import {
   FontAwesome,
   Entypo,
 } from "@expo/vector-icons";
-import { firebase } from "../firebase/FirebaseConfig";
 import backgroundImage from "../assets/images/home-background.jpg";
 import { useSelector } from "react-redux";
 
 const HomeScreen = ({ navigation, route }) => {
   const loginUserData = useSelector((state) => state.auth.userData);
-  // console.log(loginUserData.uid)
+  const chatData = useSelector(state=>state.chat.chatList)
   const [chatIds, setChatIds] = useState([]);
   const [allChatsData, setAllChatsData] = useState([]);
   const [allChatsUsers, setAllChatsUsers] = useState([]);
-  // console.log(allChatsData);
+  console.log(allChatsData);
+  // console.log(chatIds)
 
   if (allChatsData.length) {
     let chatData = allChatsData.sort((a, b) => {
       return new Date(b.updatedAt) - new Date(a.updatedAt);
     });
     setAllChatsData(chatData);
+
   }
   // console.log(chatData)
 
@@ -59,48 +60,6 @@ const HomeScreen = ({ navigation, route }) => {
     },
   });
 
-  // useEffect(() => {
-  //   // getAllUsers();
-  //   getAllChatsIds();
-  //   getAllChatsData();
-  // }, []);
-
-  // const getAllChatsIds = async () => {
-  //  const chats = await firebase.database().ref(`UsersChats/${loginUserData.uid}`).on("value",(snapshot)=>{
-  //    let chatIds = Object.values(snapshot.val())
-  //    setChatIds(chatIds)
-  //  })
-  // };
-
-  // const getAllChatsData = async () => {
-  //   let chatData= []
-  //   for(let i =0;i<chatIds.length;i++){
-  //     let chatId = chatIds[i]
-  //     const datas = await firebase.database().ref(`Chats/${chatId}`).on("value",(snapshot)=>{
-  //       // console.log(snapshot.val())
-  //          chatData.push(snapshot.val())
-  //       })
-  //     }
-  //     setAllChatsData(chatData);
-  // };
-
-  // const getAllUsers = async () => {
-  //  let  allUsers=[]
-  //   await firebase
-  //     .database()
-  //     .ref("UserData")
-  //     .on("value",async (snapshot) => {
-  //       let data = Object.values(snapshot.val());
-  //        data.forEach((user)=>{
-  //           if(user.uid !== loginUserData.uid){
-  //             allUsers.push(user)
-  //           }
-  //        })
-  //       // console.log(allUsers);
-  //     });
-  //     return allUsers
-  // };
-
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -114,16 +73,7 @@ const HomeScreen = ({ navigation, route }) => {
             data={allChatsData}
             renderItem={(item) => {
               console.log(item.item);
-              // const userIds = item.item.users.filter((uid)=>uid !== loginUserData.uid);
-              // console.log(userIds)
-              // let userData = ""
-              // if(userIds.length<2){
-              //    firebase.database().ref(`UserData/${userIds[0]}`).on("value",(snapshot)=>{
-              //       console.log(snapshot.val());
-              //       userData = snapshot.val()
-              //    })
-              // }
-
+     
               return (
                 <TouchableOpacity
                   style={styles.chatUserContainer}
