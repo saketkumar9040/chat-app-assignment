@@ -20,15 +20,16 @@ const SearchScreen = () => {
   const [searchText, setSearchText] = useState("");
   const [userList, setUserList] = useState([]);
   console.log(userList);
-
+  
   const searchUser = async () => {
     try {
-      if (searchText === "") {
-        return Alert.alert(
-          "OOPS🙄",
-          "Please type some keywords for Searching users"
-        );
-      }
+      setUserList([]);
+      // if (searchText === "") {
+      //   return Alert.alert(
+      //     "OOPS🙄",
+      //     "Please type some keywords for Searching users"
+      //   );
+      // }
       const searchQuery = searchText.toLowerCase().trim();
       const searchResult = firebase
         .database()
@@ -37,20 +38,33 @@ const SearchScreen = () => {
         .startAt(searchQuery)
         .endAt(searchQuery + "\uf8ff").once("value",(snapshot)=>{
           // console.log(snapshot.val());
-          let allUsersList = []
-          let users = Object.values(snapshot.val());
-          for(let i = 0;i<users.length;i++){
-            if(users[i].uid !== loggedInUser.uid){
-              allUsersList.push(users[i])
+          if(snapshot.exists()){
+            let allUsersList = []
+            let users = Object.values(snapshot.val());
+            for(let i = 0;i<users.length;i++){
+              if(users[i].uid !== loggedInUser.uid){
+                allUsersList.push(users[i])
+              }
             }
+            setUserList(allUsersList);
+            setSearchText("")
+          }else{
+            setSearchText("")
+            return Alert.alert("No user Found😶");
           }
-          setUserList(allUsersList)
         });
     } catch (error) {
       console.log(error);
     }
   };
 
+  useEffect(()=>{
+    const delaySearch = setTimeout(async()=>{
+     await searchUser();
+    },500)
+    return clearTimeout(delaySearch)
+  },[searchText])
+  
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -62,7 +76,12 @@ const SearchScreen = () => {
           <TextInput
             style={styles.textInput}
             placeholder="search user"
-            onChangeText={(e) => setSearchText(e)}
+            onChangeText={(e) => {
+              if(e === ""){
+                setUserList([]);
+              }
+              setSearchText(e)
+            }}
           />
           <TouchableOpacity onPress={() => searchUser()}>
             <Ionicons name="search" size={40} color="#fff" />
@@ -101,7 +120,7 @@ const SearchScreen = () => {
         ):(
           <View style={styles.noUserFound}>
           <Entypo name="emoji-sad" size={200} color="#fff" />
-          <Text style={styles.noUserFoundText}>No User !</Text>
+          <Text style={styles.noUserFoundText}>Search users</Text>
         </View>
         )}
        
