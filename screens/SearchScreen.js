@@ -14,7 +14,7 @@ import { Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { firebase } from "../firebase/FirebaseConfig";
 import { useSelector } from "react-redux";
 
-const SearchScreen = () => {
+const SearchScreen = ({navigation,route}) => {
 
   const loggedInUser = useSelector((state)=>state.auth.userData);
   const [searchText, setSearchText] = useState("");
@@ -24,12 +24,6 @@ const SearchScreen = () => {
   const searchUser = async () => {
     try {
       setUserList([]);
-      // if (searchText === "") {
-      //   return Alert.alert(
-      //     "OOPS🙄",
-      //     "Please type some keywords for Searching users"
-      //   );
-      // }
       const searchQuery = searchText.toLowerCase().trim();
       const searchResult = firebase
         .database()
@@ -47,10 +41,8 @@ const SearchScreen = () => {
               }
             }
             setUserList(allUsersList);
-            // setSearchText("")
           }
         });
-        // setSearchText("");
     } catch (error) {
       setSearchText("")
       console.log(error);
@@ -85,17 +77,12 @@ const SearchScreen = () => {
             <Ionicons name="search" size={40} color="#fff" />
           </TouchableOpacity>
         </View>
-        {/* {searchText === "" && (
-          <View style={styles.searchUserContainer}>
-            <Entypo name="emoji-happy" size={200} color="#fff" />
-            <Text style={styles.searchUserText}>Search users</Text>
-          </View>
-        )} */}
         { userList.length > 0 ? (
           <FlatList
             style={{ flex: 1 }}
             data={userList}
             renderItem={(item) => {
+              console.log(item.item)
               return (
                 <TouchableOpacity
                   style={styles.chatUserContainer}
